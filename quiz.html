@@ -1,116 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz - Mechatronics Study App</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .quiz-container {
-            max-width: 500px;
-            margin: auto;
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
-        .question {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
-        .options button {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 1rem;
-            border-radius: 10px;
-            background: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .options button:hover {
-            background: #2980b9;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrix Quiz Game</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Mechatronics Quiz</h1>
-        <p>Test your knowledge!</p>
-    </header>
 
-    <main class="quiz-container">
-        <div id="quiz">
-            <div class="question" id="question"></div>
-            <div class="options" id="options"></div>
-            <div class="result" id="result"></div>
-        </div>
-        <button class="btn btn-accent" onclick="nextQuestion()">Next Question</button>
-    </main>
+<h1>💻 Matrix Quiz Challenge</h1>
+<div class="quiz-container">
+  <div id="question" class="question"></div>
+  <div id="choices" class="choices"></div>
+  <input type="text" id="short-answer" style="display:none;" placeholder="Type your answer...">
+  <br>
+  <button id="submit">Submit</button>
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+  <h2 id="score">Score: 0</h2>
+</div>
 
-    <footer>
-        <p><a href="index.html" class="btn">⬅ Back Home</a></p>
-    </footer>
+<!-- Sound Effects -->
+<audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="wrong-sound" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg"></audio>
 
-    <script>
-        const quizData = [
-            { question: "What does PLC stand for?", options: ["Programmable Logic Controller", "Power Line Circuit", "Primary Load Conductor"], answer: 0 },
-            { question: "Ohm's Law formula?", options: ["V = I × R", "P = V × I", "R = V / I"], answer: 0 },
-            { question: "Function of a servo motor?", options: ["Precise angular position control", "High torque constant speed", "Random rotation"], answer: 0 },
-            { question: "Unit of electrical resistance?", options: ["Volt", "Ampere", "Ohm"], answer: 2 },
-            { question: "What is PWM?", options: ["Pulse Width Modulation", "Power Watt Measurement", "Phase Wave Mechanics"], answer: 0 }
-        ];
+<script>
+const quizData = [
+  { type: "mc", question: "What does 'PLC' stand for?", choices: ["Programmable Logic Controller", "Power Line Connector", "Processor Load Circuit"], answer: "Programmable Logic Controller" },
+  { type: "tf", question: "Robotics is only used in manufacturing.", answer: "False" },
+  { type: "short", question: "What unit measures electrical current?", answer: "ampere" },
+  { type: "mc", question: "Which sensor measures distance?", choices: ["Ultrasonic", "Thermistor", "Gyroscope"], answer: "Ultrasonic" },
+  { type: "tf", question: "Ohm's Law is V = I × R.", answer: "True" },
+  { type: "short", question: "Name the part that converts electrical to mechanical motion.", answer: "motor" },
+  { type: "mc", question: "Which programming language is common for Arduino?", choices: ["Python", "C++", "Java"], answer: "C++" },
+  { type: "tf", question: "A stepper motor moves in precise steps.", answer: "True" },
+  { type: "short", question: "What does AI stand for?", answer: "artificial intelligence" },
+  { type: "mc", question: "What is the binary value of decimal 5?", choices: ["101", "110", "111"], answer: "101" },
+  { type: "tf", question: "Hydraulics use compressed air.", answer: "False" },
+  { type: "short", question: "What does CAD stand for?", answer: "computer-aided design" },
+  { type: "mc", question: "Which is a rotational sensor?", choices: ["Encoder", "Thermocouple", "Accelerometer"], answer: "Encoder" },
+  { type: "tf", question: "A diode allows current in both directions.", answer: "False" },
+  { type: "short", question: "Name the symbol Ω represents.", answer: "ohm" },
+  { type: "mc", question: "Which communication protocol is used in I²C?", choices: ["Two-wire", "Three-wire", "Four-wire"], answer: "Two-wire" },
+  { type: "tf", question: "Robots can use vision systems to detect objects.", answer: "True" },
+  { type: "short", question: "What is the main brain of a computer?", answer: "cpu" },
+  { type: "mc", question: "Which device stores electrical energy?", choices: ["Capacitor", "Resistor", "Inductor"], answer: "Capacitor" },
+  { type: "tf", question: "Pneumatics use pressurized liquids.", answer: "False" },
+  { type: "short", question: "What does IoT stand for?", answer: "internet of things" },
+  { type: "mc", question: "Which is a type of gear?", choices: ["Spur", "Bolt", "Shaft"], answer: "Spur" },
+  { type: "tf", question: "Servos can rotate continuously.", answer: "False" },
+  { type: "short", question: "What does LED stand for?", answer: "light emitting diode" },
+  { type: "mc", question: "Which tool is used to measure voltage?", choices: ["Multimeter", "Caliper", "Micrometer"], answer: "Multimeter" },
+  { type: "tf", question: "The Raspberry Pi is a microcontroller.", answer: "False" },
+  { type: "short", question: "What does CNC stand for?", answer: "computer numerical control" },
+  { type: "mc", question: "Which is a feedback device for motors?", choices: ["Encoder", "Transistor", "Relay"], answer: "Encoder" },
+  { type: "tf", question: "Sensors can only detect physical objects.", answer: "False" },
+  { type: "short", question: "What is the SI unit of force?", answer: "newton" }
+];
 
-        let currentQuestion = 0;
-        let score = 0;
+let currentQuestion = 0;
+let score = 0;
 
-        const questionEl = document.getElementById("question");
-        const optionsEl = document.getElementById("options");
-        const resultEl = document.getElementById("result");
+function loadQuestion() {
+  const q = quizData[currentQuestion];
+  document.getElementById("question").textContent = q.question;
+  const choicesContainer = document.getElementById("choices");
+  const shortAnswer = document.getElementById("short-answer");
+  choicesContainer.innerHTML = "";
+  shortAnswer.style.display = "none";
 
-        function loadQuestion() {
-            const q = quizData[currentQuestion];
-            questionEl.textContent = q.question;
-            optionsEl.innerHTML = "";
-            resultEl.textContent = "";
-            q.options.forEach((opt, index) => {
-                const btn = document.createElement("button");
-                btn.textContent = opt;
-                btn.onclick = () => checkAnswer(index);
-                optionsEl.appendChild(btn);
-            });
-        }
+  if (q.type === "mc") {
+    q.choices.forEach(choice => {
+      const btn = document.createElement("button");
+      btn.textContent = choice;
+      btn.onclick = () => checkAnswer(choice);
+      choicesContainer.appendChild(btn);
+    });
+  } else if (q.type === "tf") {
+    ["True", "False"].forEach(choice => {
+      const btn = document.createElement("button");
+      btn.textContent = choice;
+      btn.onclick = () => checkAnswer(choice);
+      choicesContainer.appendChild(btn);
+    });
+  } else if (q.type === "short") {
+    shortAnswer.style.display = "block";
+    document.getElementById("submit").onclick = () => checkAnswer(shortAnswer.value);
+  }
+}
 
-        function checkAnswer(selected) {
-            const correct = quizData[currentQuestion].answer;
-            if (selected === correct) {
-                score++;
-                resultEl.textContent = "✅ Correct!";
-            } else {
-                resultEl.textContent = `❌ Wrong! Correct answer: ${quizData[currentQuestion].options[correct]}`;
-            }
-        }
+function checkAnswer(answer) {
+  const correct = quizData[currentQuestion].answer.toLowerCase().trim();
+  if (answer.toLowerCase().trim() === correct) {
+    score++;
+    document.getElementById("correct-sound").play();
+  } else {
+    document.getElementById("wrong-sound").play();
+  }
+  document.getElementById("score").textContent = `Score: ${score}`;
+  currentQuestion++;
+  document.getElementById("progress").style.width = `${(currentQuestion / quizData.length) * 100}%`;
 
-        function nextQuestion() {
-            currentQuestion++;
-            if (currentQuestion < quizData.length) {
-                loadQuestion();
-            } else {
-                questionEl.textContent = "Quiz Completed!";
-                optionsEl.innerHTML = "";
-                resultEl.textContent = `Your score: ${score} / ${quizData.length}`;
-            }
-        }
+  if (currentQuestion < quizData.length) {
+    loadQuestion();
+  } else {
+    document.getElementById("question").textContent = "🎉 Quiz Complete!";
+    document.getElementById("choices").innerHTML = "";
+    document.getElementById("short-answer").style.display = "none";
+    document.getElementById("submit").style.display = "none";
+  }
+}
 
-        loadQuestion();
-    </script>
+loadQuestion();
+</script>
 </body>
 </html>
