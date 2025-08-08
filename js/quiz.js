@@ -1,20 +1,29 @@
-fetch("data/quizzes.json")
-  .then(res => res.json())
-  .then(questions => {
-    const container = document.getElementById("quiz-container");
-    questions.forEach((q, idx) => {
-      const div = document.createElement("div");
-      div.innerHTML = `<p>${idx+1}. ${q.q}</p>` +
-        q.choices.map((c, i) => `<label><input type="radio" name="q${idx}" value="${i}">${c}</label>`).join("<br>");
-      container.appendChild(div);
-    });
+// js/quiz.js - lightweight quiz renderer
+(async function(){
+  const root = document.getElementById('quiz-root') || document.getElementById('quiz-container');
+  if(!root) return;
+  const res = await fetch('./data/quizzes.json');
+  const data = await res.json();
+  let idx = 0, score = 0;
 
-    document.getElementById("submit-quiz").onclick = () => {
-      let score = 0;
-      questions.forEach((q, idx) => {
-        const selected = document.querySelector(`input[name=q${idx}]:checked`);
-        if (selected && parseInt(selected.value) === q.a) score++;
-      });
-      document.getElementById("quiz-result").textContent = `Score: ${score}/${questions.length}`;
-    };
-  });
+  function renderQuestion(){
+    if(idx >= data.length){
+      root.innerHTML = `<div class="card"><h2>Quiz complete</h2><p>Your score: ${score}/${data.length}</p><button class="btn btn-primary" id="retake">Retake</button></div>`;
+      document.getElementById('retake').onclick = ()=>{ idx=0; score=0; renderQuestion() };
+      return;
+    }
+    const q = data[idx];
+    const choicesHtml = q.choices.map((c,i)=>`<div class="choice" data-i="${i}">${c}</div>`).join('');
+    root.innerHTML = `<div class="card"><h3 style="margin:0 0 6px 0">${q.q}</h3><div id="choices">${choicesHtml}</div></div>`;
+    document.querySelectorAll('.choice').forEach(el=>{
+      el.onclick = ()=>{
+        const i = Number(el.getAttribute('data-i'));
+        if(i === q.a){ el.style.background='#dcfce7'; el.innerText = '✅ '+el.innerText; score++; }
+        else { el.style.background='#fee2e2'; el.innerText = '✖️ '+el.innerText; }
+        setTimeout(()=>{ idx++; renderQuestion() }, 700);
+      }
+    })
+  }
+
+  renderQuestion();
+})();
