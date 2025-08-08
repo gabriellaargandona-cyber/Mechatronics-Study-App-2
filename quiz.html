@@ -1,26 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz - Mechatronics Study App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Quizzes - Gabriella's Mechatronics Hub</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-  <header>
-    <h1>📝 Quiz Time!</h1>
-    <nav>
+  <div class="container">
+    <div class="header">
+      <div class="logo">G</div>
+      <div class="title"><h1>Gabriella's Mechatronics Hub</h1><p>Quizzes</p></div>
+    </div>
+    <nav class="nav">
       <a href="index.html">Home</a>
       <a href="flashcards.html">Flashcards</a>
+      <a href="quiz.html" class="active">Quizzes</a>
       <a href="game.html">Game</a>
     </nav>
-  </header>
-  <main>
-    <div id="quiz-container"></div>
-    <button id="submit-quiz">Submit</button>
-    <div id="quiz-result"></div>
-  </main>
+
+    <div id="quiz-root"></div>
+
+    <div class="footer small">Edit <code>data/quizzes.json</code> in the repo to change questions.</div>
+  </div>
+
+  <script src="js/main.js"></script>
   <script src="js/quiz.js"></script>
 </body>
 </html>
