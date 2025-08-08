@@ -1,30 +1,106 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Flashcards - Gabriella's Mechatronics Hub</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/animations.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flashcards - Mechatronics Study App</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .flashcards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      padding-top: 150%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+    .card.flip .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .card-front {
+      background: #00c6fb;
+      color: white;
+    }
+    .card-back {
+      background: #005bea;
+      color: white;
+      transform: rotateY(180deg);
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="logo">G</div>
-      <div class="title"><h1>Gabriella's Mechatronics Hub</h1><p>Flashcards</p></div>
-    </div>
-    <nav class="nav">
+
+  <header>
+    <h1>Mechatronics Flashcards</h1>
+    <nav>
       <a href="index.html">Home</a>
-      <a href="flashcards.html" class="active">Flashcards</a>
-      <a href="quiz.html">Quizzes</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="flashcards.html">Flashcards</a>
       <a href="game.html">Game</a>
     </nav>
+  </header>
 
-    <div id="flash-root" class="card"></div>
-    <div class="footer small">Tip: tap Flip to flip cards. Add cards to your browser (saved locally).</div>
-  </div>
+  <div class="flashcards-container" id="flashcards"></div>
 
-  <script src="js/main.js"></script>
-  <script src="js/flashcards.js"></script>
+  <footer>
+    <p>&copy; 2025 Mechatronics Study App</p>
+  </footer>
+
+  <script>
+    const flashcardsData = [
+      { term: "Servo Motor", definition: "A motor that controls precise angular position in robotics." },
+      { term: "Ultrasonic Sensor", definition: "Measures distance using sound waves." },
+      { term: "Microcontroller", definition: "A small computer on a single chip used to control devices." },
+      { term: "PID Controller", definition: "Control loop using Proportional, Integral, and Derivative terms." },
+      { term: "Modbus", definition: "A communication protocol for industrial automation." },
+      { term: "End Effector", definition: "The device at the end of a robotic arm, such as a gripper." },
+      { term: "Stepper Motor", definition: "A motor that moves in discrete steps for precise control." },
+      { term: "Encoder", definition: "Device that converts position or motion into a signal." }
+    ];
+
+    function createFlashcards() {
+      const container = document.getElementById('flashcards');
+      flashcardsData.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.classList.add('card');
+        cardEl.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front">${card.term}</div>
+            <div class="card-back">${card.definition}</div>
+          </div>
+        `;
+        cardEl.addEventListener('click', () => {
+          cardEl.classList.toggle('flip');
+        });
+        container.appendChild(cardEl);
+      });
+    }
+
+    createFlashcards();
+  </script>
 </body>
 </html>
