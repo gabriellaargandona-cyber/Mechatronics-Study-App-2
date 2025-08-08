@@ -1,4 +1,22 @@
 [
-  {"q": "What is PWM?", "choices": ["Pulse Width Modulation", "Power Watt Measurement", "Phase Wave Modulation"], "a": 0},
-  {"q": "What does PLC stand for?", "choices": ["Programmable Logic Controller", "Power Line Communication", "Process Level Control"], "a": 0}
+  {
+    "q": "What does PLC stand for?",
+    "choices": ["Programmable Logic Controller", "Power Line Communication", "Process Level Control"],
+    "a": 0
+  },
+  {
+    "q": "Which sensor is commonly used for distance measurement?",
+    "choices": ["Ultrasonic sensor", "Thermistor", "Light sensor"],
+    "a": 0
+  },
+  {
+    "q": "What is PWM commonly used for?",
+    "choices": ["Motor speed control", "Measuring resistance", "Cooling systems"],
+    "a": 0
+  },
+  {
+    "q": "In control theory, what does PID stand for?",
+    "choices": ["Proportional Integral Derivative", "Power Input Delay", "Pulse Inductive Drive"],
+    "a": 0
+  }
 ]
