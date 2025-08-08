@@ -1,159 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cyberpunk Flashcards</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto+Mono&display=swap" rel="stylesheet" />
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrix Cyberpunk Flashcards</title>
+<style>
     body {
-      font-family: 'Roboto Mono', monospace;
-      background: radial-gradient(circle at top, #0a0a0a, #000000);
-      color: #00ffff;
-      text-align: center;
-      padding: 20px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+        margin: 0;
+        font-family: 'Courier New', monospace;
+        color: #00ff9f;
+        background: black;
+        overflow: hidden;
     }
-    h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2rem;
-      color: #ff00ff;
-      text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+    canvas#matrix {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 0;
     }
-    #score {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
+    .game-container {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+    .scoreboard {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+        text-shadow: 0 0 8px #00ff9f, 0 0 16px #00ff9f;
     }
     .flashcard {
-      background: rgba(20, 20, 20, 0.9);
-      border: 2px solid #00ffff;
-      box-shadow: 0 0 15px #00ffff;
-      border-radius: 10px;
-      width: 300px;
-      height: 200px;
-      margin: auto;
-      perspective: 1000px;
-      cursor: pointer;
-      transition: box-shadow 0.3s ease;
+        width: 90%;
+        max-width: 400px;
+        height: 250px;
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid #00ff9f;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 1.2em;
+        perspective: 1000px;
+        cursor: pointer;
+        transition: transform 0.6s;
+        box-shadow: 0 0 15px #00ff9f;
     }
-    .flashcard:hover {
-      box-shadow: 0 0 25px #ff00ff;
+    .flashcard.flipped {
+        background: rgba(0, 40, 0, 0.9);
+        transform: rotateY(180deg);
     }
-    .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      transition: transform 0.8s;
-      transform-style: preserve-3d;
+    .next-btn {
+        margin-top: 15px;
+        padding: 10px 20px;
+        border: 2px solid #00ff9f;
+        border-radius: 5px;
+        background: transparent;
+        color: #00ff9f;
+        font-size: 1.1em;
+        cursor: pointer;
+        text-shadow: 0 0 5px #00ff9f;
+        transition: all 0.2s;
     }
-    .flashcard.flipped .card-inner {
-      transform: rotateY(180deg);
+    .next-btn:hover {
+        background: rgba(0, 255, 159, 0.1);
+        box-shadow: 0 0 10px #00ff9f;
     }
-    .card-front, .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
-      font-size: 1rem;
+    .ripple {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background: rgba(0, 255, 159, 0.3);
+        animation: rippleEffect 0.5s ease-out forwards;
+        z-index: 10;
     }
-    .card-front {
-      background-color: rgba(0,0,0,0.8);
-      color: #00ffff;
+    @keyframes rippleEffect {
+        from { opacity: 1; }
+        to { opacity: 0; }
     }
-    .card-back {
-      background-color: rgba(0,0,0,0.8);
-      color: #ff00ff;
-      transform: rotateY(180deg);
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: transparent;
-      border: 2px solid #ff00ff;
-      color: #ff00ff;
-      font-family: 'Orbitron', sans-serif;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border-radius: 8px;
-    }
-    button:hover {
-      background: #ff00ff;
-      color: #000;
-      box-shadow: 0 0 15px #ff00ff;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <h1>Cyberpunk Flashcards</h1>
-  <div id="score">Score: <span id="points">0</span></div>
-  <div class="flashcard" id="flashcard">
-    <div class="card-inner">
-      <div class="card-front" id="card-front">Click to Reveal</div>
-      <div class="card-back" id="card-back">Answer</div>
+
+<canvas id="matrix"></canvas>
+
+<div class="game-container">
+    <div class="scoreboard">
+        Score: <span id="score">0</span> | Combo: <span id="combo">0</span>
     </div>
-  </div>
-  <button id="next-btn">Next Card</button>
+    <div class="flashcard" id="flashcard">Tap to reveal</div>
+    <button class="next-btn" id="nextCard">Next Card</button>
+</div>
 
-  <script>
-    const flashcards = [
-      { q: "What does PLC stand for?", a: "Programmable Logic Controller" },
-      { q: "Purpose of an encoder?", a: "To measure rotational position or speed" },
-      { q: "Ohm's law formula?", a: "V = I × R" },
-      { q: "Sensor detecting object without contact?", a: "Proximity Sensor" },
-      { q: "Function of a servo motor?", a: "Precise control of angular position" },
-      { q: "AC frequency in most countries?", a: "50 or 60 Hz" },
-      { q: "What is PWM used for?", a: "Control motor speed or LED brightness" },
-      { q: "Primary use of a relay?", a: "Switching circuits using low power signal" },
-      { q: "Purpose of a limit switch?", a: "Detect physical movement limits" },
-      { q: "Difference between DC and AC?", a: "DC flows one way, AC alternates" },
-      { q: "Robot joint angle measure?", a: "Degree or Radian" },
-      { q: "What is torque?", a: "Rotational force" },
-      { q: "Stepper motor advantage?", a: "Precise incremental movement" },
-      { q: "Microcontroller example?", a: "Arduino" },
-      { q: "PLC programming language example?", a: "Ladder Logic" },
-      { q: "Purpose of H-bridge?", a: "Control motor direction" },
-      { q: "Name of robotic arm end part?", a: "End Effector" },
-      { q: "Purpose of a gearbox?", a: "Adjust torque and speed" },
-      { q: "Optical sensor detects?", a: "Light changes" },
-      { q: "Main goal of preventive maintenance?", a: "Avoid equipment failure" }
+<script>
+    // Matrix background
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+    function drawMatrix() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + 'px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters.charAt(Math.floor(Math.random() * letters.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(drawMatrix, 33);
+
+    // Flashcards game
+    const questions = [
+        {q: "What does PLC stand for?", a: "Programmable Logic Controller"},
+        {q: "True or False: Ohm's Law is V = I × R", a: "True"},
+        {q: "Name one sensor type used in robotics", a: "Proximity sensor"},
+        {q: "What is the unit of electric current?", a: "Ampere"},
+        {q: "True or False: A stepper motor moves in discrete steps", a: "True"},
+        {q: "What does CNC stand for?", a: "Computer Numerical Control"},
+        {q: "Short Answer: Formula for power in DC?", a: "P = V × I"},
+        {q: "Which gear increases torque?", a: "Larger gear"},
+        {q: "What is a microcontroller?", a: "A small computer on a chip"},
+        {q: "True or False: Servo motors rotate continuously", a: "False"},
+        // add 20 more
+        {q: "Binary system uses base ___", a: "2"},
+        {q: "Short Answer: Tool to measure voltage?", a: "Voltmeter"},
+        {q: "Name one programming language for robotics", a: "Python"},
+        {q: "True or False: Hydraulic systems use air", a: "False"},
+        {q: "What is the unit of resistance?", a: "Ohm"},
+        {q: "Which component stores charge?", a: "Capacitor"},
+        {q: "Short Answer: 1 kW = ___ W", a: "1000"},
+        {q: "What does AI stand for?", a: "Artificial Intelligence"},
+        {q: "True or False: Encoders measure position", a: "True"},
+        {q: "Name one type of welding used in robotics", a: "Spot welding"},
+        {q: "What does CAD stand for?", a: "Computer-Aided Design"},
+        {q: "Short Answer: Symbol for current?", a: "I"},
+        {q: "True or False: Pneumatics uses liquids", a: "False"},
+        {q: "What is the SI unit of force?", a: "Newton"},
+        {q: "Which device converts AC to DC?", a: "Rectifier"},
+        {q: "True or False: G-code is used for CNC machines", a: "True"},
+        {q: "Short Answer: Ohm's Law variable for voltage?", a: "V"},
+        {q: "Name a component that produces light", a: "LED"},
+        {q: "True or False: PLCs can replace relay logic", a: "True"},
+        {q: "What is mechatronics?", a: "Integration of mechanical, electrical, and computer systems"}
     ];
+    let currentIndex = 0, score = 0, combo = 0;
+    const flashcard = document.getElementById('flashcard');
+    const scoreDisplay = document.getElementById('score');
+    const comboDisplay = document.getElementById('combo');
+    const nextBtn = document.getElementById('nextCard');
 
-    let currentIndex = 0;
-    let points = 0;
-
-    const flashcardEl = document.getElementById("flashcard");
-    const cardFront = document.getElementById("card-front");
-    const cardBack = document.getElementById("card-back");
-    const pointsEl = document.getElementById("points");
-
-    function loadCard(index) {
-      cardFront.textContent = flashcards[index].q;
-      cardBack.textContent = flashcards[index].a;
-      flashcardEl.classList.remove("flipped");
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
     }
 
-    flashcardEl.addEventListener("click", () => {
-      flashcardEl.classList.toggle("flipped");
-      if (flashcardEl.classList.contains("flipped")) {
-        points += 10;
-        pointsEl.textContent = points;
-      }
+    shuffleArray(questions);
+
+    let showingAnswer = false;
+
+    flashcard.addEventListener('click', () => {
+        if (!showingAnswer) {
+            flashcard.textContent = questions[currentIndex].a;
+            showingAnswer = true;
+            playSound('flip');
+        } else {
+            correctAnswer();
+        }
     });
 
-    document.getElementById("next-btn").addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % flashcards.length;
-      loadCard(currentIndex);
-    });
+    nextBtn.addEventListener('click', nextCard);
 
-    loadCard(currentIndex);
-  </script>
+    function correctAnswer() {
+        score++;
+        combo++;
+        scoreDisplay.textContent = score;
+        comboDisplay.textContent = combo;
+        flashRipple();
+        playSound('correct');
+        nextCard();
+    }
+
+    function nextCard() {
+        showingAnswer = false;
+        currentIndex++;
+        if (currentIndex >= questions.length) {
+            currentIndex = 0;
+            shuffleArray(questions);
+        }
+        flashcard.textContent = questions[currentIndex].q;
+    }
+
+    function flashRipple() {
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple';
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 500);
+    }
+
+    function playSound(type) {
+        let audio;
+        if (type === 'flip') {
+            audio = new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
+        } else if (type === 'correct') {
+            audio = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+        }
+        if (audio) audio.play();
+    }
+
+    nextCard();
+</script>
+
 </body>
 </html>
