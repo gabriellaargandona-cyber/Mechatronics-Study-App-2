@@ -1,116 +1,354 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Matrix Quiz Game</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Matrix Quiz — Mechatronics</title>
+<style>
+/* Inline Matrix-style theme (self-contained) */
+:root{
+  --bg:#000904;
+  --neon:#00ff6a;
+  --neon-2:#00ffb0;
+  --muted:#79b88f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family: "Roboto Mono", monospace;background:
+  radial-gradient(circle at 10% 10%, rgba(0,255,138,0.02), transparent 6%),
+  linear-gradient(180deg,#000604 0%, #00110a 90%);color:var(--neon);-webkit-font-smoothing:antialiased;}
+.container{max-width:920px;margin:16px auto;padding:18px}
+header{text-align:center;margin-bottom:12px}
+header h1{font-size:1.2rem;color:var(--neon-2);text-shadow:0 0 8px rgba(0,255,176,0.06)}
+header p{color:var(--muted);font-size:0.86rem;margin-top:6px}
+
+/* panel */
+.panel{background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.28));border-radius:10px;padding:14px;border:1px solid rgba(0,255,138,0.06)}
+
+/* meta row */
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.badge{padding:6px 10px;border-radius:8px;background:rgba(0,255,138,0.03);border:1px solid rgba(0,255,138,0.05);font-weight:700;color:var(--neon)}
+.scoreboard{color:var(--muted);text-align:right;font-size:0.95rem}
+@media(max-width:720px){.scoreboard{text-align:left}}
+
+/* question box */
+.question-box{margin-top:10px;padding:12px;border-radius:8px;border:1px dashed rgba(0,255,138,0.04);background:rgba(0,0,0,0.18)}
+.q-text{font-size:1.05rem;margin-bottom:12px}
+.options{display:grid;gap:8px}
+.opt{padding:10px;border-radius:8px;border:1px solid rgba(0,255,138,0.05);background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.12));cursor:pointer;transition:transform .12s,box-shadow .12s}
+.opt:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,255,138,0.03)}
+.opt.correct{background:linear-gradient(90deg, rgba(0,255,138,0.06), rgba(0,255,176,0.04));border-color:rgba(0,255,138,0.12)}
+.opt.wrong{background:linear-gradient(90deg, rgba(255,0,94,0.03), rgba(255,0,94,0.02));border-color:rgba(255,0,94,0.12);color:#ffccd5}
+
+/* short answer */
+#saArea input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,255,138,0.05);background:transparent;color:var(--neon);font-size:1rem}
+
+/* controls */
+.controls{display:flex;gap:8px;align-items:center;margin-top:12px}
+.btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,255,138,0.06);background:transparent;color:var(--neon);cursor:pointer}
+.btn.primary{background:linear-gradient(90deg, rgba(0,255,138,0.06), rgba(0,255,176,0.03));box-shadow:0 6px 22px rgba(0,255,138,0.03)}
+.feedback{margin-left:8px;color:var(--muted);font-weight:700}
+
+/* progress */
+.progress{height:10px;background:rgba(0,0,0,0.25);border-radius:999px;overflow:hidden;border:1px solid rgba(0,255,138,0.03);margin-top:10px}
+.progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--neon),var(--neon-2));transition:width .35s}
+
+/* end screen */
+.end{padding:20px;text-align:center}
+.big{font-size:1.5rem;color:var(--neon-2);margin-bottom:8px}
+.small{color:var(--muted);margin-bottom:6px}
+</style>
 </head>
 <body>
+<div class="container">
+  <header>
+    <h1>CYBER-QUIZ • Mechatronics & Robotics</h1>
+    <p>30 mixed questions — multiple choice, true/false & short answer</p>
+  </header>
 
-<h1>💻 Matrix Quiz Challenge</h1>
-<div class="quiz-container">
-  <div id="question" class="question"></div>
-  <div id="choices" class="choices"></div>
-  <input type="text" id="short-answer" style="display:none;" placeholder="Type your answer...">
-  <br>
-  <button id="submit">Submit</button>
-  <div class="progress-bar"><div class="progress" id="progress"></div></div>
-  <h2 id="score">Score: 0</h2>
+  <div id="app" class="panel">
+    <div class="meta">
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="badge">Q <span id="qnum">0</span>/<span id="qtotal">0</span></div>
+        <div class="badge">Type: <span id="qtype">—</span></div>
+        <div class="badge">Streak: <span id="streak">0</span></div>
+      </div>
+      <div class="scoreboard">Score: <strong id="score">0</strong> <div style="font-size:0.8rem;color:var(--muted)">quick answers = bonus</div></div>
+    </div>
+
+    <div class="progress"><i id="progressFill"></i></div>
+
+    <div id="questionBox" class="question-box" aria-live="polite">
+      <div id="qtext" class="q-text">Loading...</div>
+      <div id="optionsArea" class="options"></div>
+
+      <div id="saArea" style="display:none;margin-top:10px">
+        <input id="saInput" placeholder="Type your short answer and press Submit" autocomplete="off" />
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+        <div class="feedback" id="feedback"></div>
+        <div style="display:flex;align-items:center;gap:8px"><div style="font-weight:700">⏱</div><div id="timer">20</div>s</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="skipBtn" class="btn">Skip</button>
+      <button id="submitBtn" class="btn primary">Submit / Next</button>
+      <button id="restartBtn" class="btn" style="margin-left:auto">Restart</button>
+    </div>
+  </div>
+
+  <div id="endScreen" class="panel" style="display:none;margin-top:12px">
+    <div class="end">
+      <div class="big" id="endScore">Score: 0</div>
+      <div class="small" id="endMsg">Nice!</div>
+      <div style="margin-top:12px">
+        <button id="playAgain" class="btn primary">Play Again</button>
+        <a class="btn" href="index.html" style="margin-left:8px">Back Home</a>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Sound Effects -->
-<audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-<audio id="wrong-sound" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg"></audio>
-
 <script>
-const quizData = [
-  { type: "mc", question: "What does 'PLC' stand for?", choices: ["Programmable Logic Controller", "Power Line Connector", "Processor Load Circuit"], answer: "Programmable Logic Controller" },
-  { type: "tf", question: "Robotics is only used in manufacturing.", answer: "False" },
-  { type: "short", question: "What unit measures electrical current?", answer: "ampere" },
-  { type: "mc", question: "Which sensor measures distance?", choices: ["Ultrasonic", "Thermistor", "Gyroscope"], answer: "Ultrasonic" },
-  { type: "tf", question: "Ohm's Law is V = I × R.", answer: "True" },
-  { type: "short", question: "Name the part that converts electrical to mechanical motion.", answer: "motor" },
-  { type: "mc", question: "Which programming language is common for Arduino?", choices: ["Python", "C++", "Java"], answer: "C++" },
-  { type: "tf", question: "A stepper motor moves in precise steps.", answer: "True" },
-  { type: "short", question: "What does AI stand for?", answer: "artificial intelligence" },
-  { type: "mc", question: "What is the binary value of decimal 5?", choices: ["101", "110", "111"], answer: "101" },
-  { type: "tf", question: "Hydraulics use compressed air.", answer: "False" },
-  { type: "short", question: "What does CAD stand for?", answer: "computer-aided design" },
-  { type: "mc", question: "Which is a rotational sensor?", choices: ["Encoder", "Thermocouple", "Accelerometer"], answer: "Encoder" },
-  { type: "tf", question: "A diode allows current in both directions.", answer: "False" },
-  { type: "short", question: "Name the symbol Ω represents.", answer: "ohm" },
-  { type: "mc", question: "Which communication protocol is used in I²C?", choices: ["Two-wire", "Three-wire", "Four-wire"], answer: "Two-wire" },
-  { type: "tf", question: "Robots can use vision systems to detect objects.", answer: "True" },
-  { type: "short", question: "What is the main brain of a computer?", answer: "cpu" },
-  { type: "mc", question: "Which device stores electrical energy?", choices: ["Capacitor", "Resistor", "Inductor"], answer: "Capacitor" },
-  { type: "tf", question: "Pneumatics use pressurized liquids.", answer: "False" },
-  { type: "short", question: "What does IoT stand for?", answer: "internet of things" },
-  { type: "mc", question: "Which is a type of gear?", choices: ["Spur", "Bolt", "Shaft"], answer: "Spur" },
-  { type: "tf", question: "Servos can rotate continuously.", answer: "False" },
-  { type: "short", question: "What does LED stand for?", answer: "light emitting diode" },
-  { type: "mc", question: "Which tool is used to measure voltage?", choices: ["Multimeter", "Caliper", "Micrometer"], answer: "Multimeter" },
-  { type: "tf", question: "The Raspberry Pi is a microcontroller.", answer: "False" },
-  { type: "short", question: "What does CNC stand for?", answer: "computer numerical control" },
-  { type: "mc", question: "Which is a feedback device for motors?", choices: ["Encoder", "Transistor", "Relay"], answer: "Encoder" },
-  { type: "tf", question: "Sensors can only detect physical objects.", answer: "False" },
-  { type: "short", question: "What is the SI unit of force?", answer: "newton" }
+/* ---------- Built-in WebAudio sound helpers (lazy init) ---------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(audioCtx) return audioCtx;
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }catch(e){
+    console.warn('Audio not available', e);
+  }
+  return audioCtx;
+}
+function playTone(freq, duration=0.12, type='sine'){
+  const ctx = ensureAudio();
+  if(!ctx) return;
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.value = 0.0001;
+  o.connect(g); g.connect(ctx.destination);
+  const now = ctx.currentTime;
+  g.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
+  o.start(now);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  o.stop(now + duration + 0.02);
+}
+function playCorrect(){ playTone(880,0.14,'sine'); playTone(1320,0.10,'triangle'); }
+function playWrong(){ playTone(160,0.14,'sawtooth'); }
+
+/* ---------- QUESTION BANK (30 mixed) ---------- */
+const BANK = [
+  {type:'mc', q:"What does PLC stand for?", choices:["Programmable Logic Controller","Power Line Connector","Process Level Circuit"], a:0},
+  {type:'mc', q:"Which sensor is best for short-range distance?", choices:["Ultrasonic sensor","Thermistor","Photocell"], a:0},
+  {type:'mc', q:"PWM is mainly used to:", choices:["Measure voltage","Control motor speed via duty cycle","Store charge"], a:1},
+  {type:'mc', q:"Which unit measures electrical resistance?", choices:["Volt","Ohm","Ampere"], a:1},
+  {type:'mc', q:"Which device gives rotational position feedback?", choices:["Relay","Encoder","Solenoid"], a:1},
+  {type:'mc', q:"Which programming style is a visual PLC language?", choices:["Ladder Logic","Python","C#"], a:0},
+  {type:'mc', q:"In robotics, an end effector is:", choices:["Power source","Tool at the arm tip","Sensor only"], a:1},
+  {type:'mc', q:"Which component stores electrical energy temporarily?", choices:["Capacitor","Resistor","Inductor"], a:0},
+  {type:'mc', q:"What does CAD stand for?", choices:["Computer Aided Design","Control And Drive","Computer Analog Device"], a:0},
+  {type:'mc', q:"A stepper motor moves by:", choices:["Continuous rotation","Discrete steps","Hydraulic motion"], a:1},
+
+  {type:'tf', q:"A gearbox reduces torque and increases speed.", a:false},
+  {type:'tf', q:"Servo motors typically include closed-loop control.", a:true},
+  {type:'tf', q:"Pneumatics use incompressible fluid.", a:false},
+  {type:'tf', q:"An H-bridge allows control of motor direction.", a:true},
+  {type:'tf', q:"Modbus is a communication protocol used in industry.", a:true},
+
+  {type:'sa', q:"Name the control loop type: P, I and D.", a:["pid","proportional integral derivative","proportional integral derivative (pid)"]},
+  {type:'sa', q:"Symbol for voltage (one letter)", a:["v","volt","voltage"]},
+  {type:'mc', q:"Which sensor measures angular velocity?", choices:["Accelerometer","Gyroscope","Photocell"], a:1},
+  {type:'mc', q:"Primary purpose of a relay?", choices:["Switch circuits","Amplify signals","Measure speed"], a:0},
+  {type:'mc', q:"A common hobby microcontroller is:", choices:["Intel i7","Arduino","Raspberry Pi 400"], a:1},
+
+  {type:'mc', q:"In control theory, 'setpoint' means:", choices:["The measured value","The desired target value","The controller's gain"], a:1},
+  {type:'mc', q:"Which is NOT a CAD/CAM app?", choices:["Fusion 360","SolidWorks","Spotify"], a:2},
+  {type:'sa', q:"Name one common position sensor (one word).", a:["encoder","potentiometer"]},
+  {type:'mc', q:"Which gas is commonly used in pneumatic systems?", choices:["Compressed air","Helium","Oxygen"], a:0},
+  {type:'mc', q:"What does IMU stand for?", choices:["Inertial Measurement Unit","Internal Motor Unit","Integrated Motion Utility"], a:0},
+
+  {type:'mc', q:"What is torque?", choices:["Linear force","Rotational force","Electrical power"], a:1},
+  {type:'sa', q:"What drawing tool abbreviation is used for mechanical parts?", a:["cad"]},
+  {type:'mc', q:"Proximity sensors typically output:", choices:["Analog voltage","Digital switch/threshold","RFID only"], a:1},
+  {type:'mc', q:"Which is an example of a closed-loop controller?", choices:["Open-loop heater","PID controller","Manual switch"], a:1},
+  {type:'mc', q:"Before working on electrical panels you should:", choices:["Leave it powered","Lock out / Tag out","Guess the wires"], a:1},
+  {type:'mc', q:"Which helps reduce electrical noise?", choices:["Shielding & grounding","Add LEDs","Increase voltage"], a:0}
 ];
 
-let currentQuestion = 0;
+/* ---------- Game state ---------- */
+let questions = [];
+let idx = 0;
 let score = 0;
+let streak = 0;
+let currentType = '';
+let timer = null;
+let timeLeft = 18; // seconds per question
+const BASE_POINTS = { mc:10, tf:6, sa:15 };
 
-function loadQuestion() {
-  const q = quizData[currentQuestion];
-  document.getElementById("question").textContent = q.question;
-  const choicesContainer = document.getElementById("choices");
-  const shortAnswer = document.getElementById("short-answer");
-  choicesContainer.innerHTML = "";
-  shortAnswer.style.display = "none";
+/* ---------- UI refs ---------- */
+const qnum = document.getElementById('qnum');
+const qtotal = document.getElementById('qtotal');
+const qtext = document.getElementById('qtext');
+const optionsArea = document.getElementById('optionsArea');
+const saArea = document.getElementById('saArea');
+const saInput = document.getElementById('saInput');
+const feedback = document.getElementById('feedback');
+const scoreEl = document.getElementById('score');
+const streakEl = document.getElementById('streak');
+const progressFill = document.getElementById('progressFill');
+const qtypeEl = document.getElementById('qtype');
+const timerEl = document.getElementById('timer');
+const submitBtn = document.getElementById('submitBtn');
+const skipBtn = document.getElementById('skipBtn');
+const restartBtn = document.getElementById('restartBtn');
+const endScreen = document.getElementById('endScreen');
+const endScore = document.getElementById('endScore');
+const endMsg = document.getElementById('endMsg');
+const playAgain = document.getElementById('playAgain');
 
-  if (q.type === "mc") {
-    q.choices.forEach(choice => {
-      const btn = document.createElement("button");
-      btn.textContent = choice;
-      btn.onclick = () => checkAnswer(choice);
-      choicesContainer.appendChild(btn);
-    });
-  } else if (q.type === "tf") {
-    ["True", "False"].forEach(choice => {
-      const btn = document.createElement("button");
-      btn.textContent = choice;
-      btn.onclick = () => checkAnswer(choice);
-      choicesContainer.appendChild(btn);
-    });
-  } else if (q.type === "short") {
-    shortAnswer.style.display = "block";
-    document.getElementById("submit").onclick = () => checkAnswer(shortAnswer.value);
-  }
+/* ---------- Helpers ---------- */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a }
+function normalize(s){ return String(s||'').toLowerCase().trim(); }
+
+/* ---------- Core functions ---------- */
+function startGame(){
+  questions = shuffle(BANK.slice()); idx=0; score=0; streak=0;
+  document.getElementById('app').style.display='block'; endScreen.style.display='none';
+  qtotal.textContent = questions.length; renderQuestion(); updateUI();
 }
 
-function checkAnswer(answer) {
-  const correct = quizData[currentQuestion].answer.toLowerCase().trim();
-  if (answer.toLowerCase().trim() === correct) {
-    score++;
-    document.getElementById("correct-sound").play();
-  } else {
-    document.getElementById("wrong-sound").play();
-  }
-  document.getElementById("score").textContent = `Score: ${score}`;
-  currentQuestion++;
-  document.getElementById("progress").style.width = `${(currentQuestion / quizData.length) * 100}%`;
+function renderQuestion(){
+  clearTimer();
+  if(idx >= questions.length){ finishGame(); return; }
+  const Q = questions[idx];
+  qnum.textContent = idx+1; qtypeEl.textContent = Q.type.toUpperCase(); currentType = Q.type;
+  qtext.textContent = Q.q;
+  feedback.textContent = ''; optionsArea.innerHTML=''; saArea.style.display='none'; saInput.value='';
 
-  if (currentQuestion < quizData.length) {
-    loadQuestion();
-  } else {
-    document.getElementById("question").textContent = "🎉 Quiz Complete!";
-    document.getElementById("choices").innerHTML = "";
-    document.getElementById("short-answer").style.display = "none";
-    document.getElementById("submit").style.display = "none";
+  // progress
+  const pct = Math.round((idx/questions.length)*100);
+  progressFill.style.width = pct + '%';
+
+  // build UI by type
+  if(Q.type==='mc'){
+    Q.choices.forEach((c,i)=>{
+      const d = document.createElement('div'); d.className='opt'; d.textContent = c;
+      d.onclick = ()=> handleMC(i,d);
+      optionsArea.appendChild(d);
+    });
+  } else if(Q.type==='tf'){
+    ['True','False'].forEach((t,i)=>{
+      const d = document.createElement('div'); d.className='opt'; d.textContent = t;
+      d.onclick = ()=> handleTF(t === 'True', d);
+      optionsArea.appendChild(d);
+    });
+  } else if(Q.type==='sa'){
+    saArea.style.display='block';
+    saInput.focus();
+    saInput.onkeydown = (e)=>{ if(e.key==='Enter') submitAnswer(); };
   }
+
+  // timer
+  timeLeft = 18;
+  timerEl.textContent = timeLeft;
+  timer = setInterval(()=>{
+    timeLeft--; timerEl.textContent = timeLeft;
+    if(timeLeft<=0){ clearTimer(); feedback.textContent='⏱ Time up!'; streak=0; idx++; setTimeout(()=>{ renderQuestion(); updateUI(); },700); }
+  },1000);
 }
 
-loadQuestion();
+function clearTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+
+function handleMC(choiceIndex, el){
+  if(currentType!=='mc') return;
+  const Q = questions[idx];
+  const correct = (choiceIndex === Q.a);
+  markOptions(choiceIndex, Q.a);
+  award(correct,'mc');
+  // short delay then next
+  setTimeout(()=>{ idx++; renderQuestion(); updateUI(); }, 900);
+}
+
+function handleTF(selectedBool, el){
+  if(currentType!=='tf') return;
+  const Q = questions[idx];
+  const correct = (selectedBool === Q.a);
+  Array.from(document.querySelectorAll('.opt')).forEach(o=>o.classList.remove('correct','wrong'));
+  el.classList.add(correct? 'correct':'wrong');
+  award(correct,'tf');
+  setTimeout(()=>{ idx++; renderQuestion(); updateUI(); },700);
+}
+
+function submitAnswer(){
+  if(currentType!=='sa') return;
+  const raw = normalize(saInput.value);
+  const Q = questions[idx];
+  let correct = false;
+  if(Array.isArray(Q.a)){
+    correct = Q.a.some(x=> normalize(x) === raw);
+  } else {
+    correct = (normalize(Q.a) === raw);
+  }
+  award(correct,'sa');
+  feedback.textContent = correct ? '✅ Correct' : `✖️ Wrong — answer: ${Array.isArray(Q.a)?Q.a[0]:Q.a}`;
+  setTimeout(()=>{ idx++; renderQuestion(); updateUI(); },900);
+}
+
+function markOptions(sel, correctIdx){
+  const nodes = document.querySelectorAll('.opt');
+  nodes.forEach((n,i)=>{ n.classList.remove('correct','wrong'); if(i===correctIdx) n.classList.add('correct'); else if(i===sel && i!==correctIdx) n.classList.add('wrong'); });
+}
+
+function award(correct, type){
+  clearTimer();
+  const base = BASE_POINTS[type] || 5;
+  if(correct){
+    streak++;
+    const streakMult = 1 + Math.min(3, Math.floor(streak/3));
+    const timeBonus = Math.max(0, Math.floor(timeLeft/2));
+    const pts = Math.round(base * streakMult) + timeBonus;
+    score += pts;
+    feedback.textContent = `+${pts} pts (streak x${streakMult}, +${timeBonus})`;
+    try{ playCorrect(); }catch(e){}
+  } else {
+    streak = 0;
+    const penalty = Math.round(base/2);
+    score = Math.max(0, score - penalty);
+    feedback.textContent = `-${penalty} pts`;
+    try{ playWrong(); }catch(e){}
+  }
+  updateUI();
+}
+
+function updateUI(){
+  scoreEl.textContent = score;
+  streakEl.textContent = streak;
+  qtotal.textContent = questions.length;
+}
+
+function finishGame(){
+  clearTimer();
+  document.getElementById('app').style.display='none'; endScreen.style.display='block';
+  endScore.textContent = `Score: ${score}`;
+  let msg = 'Nice job!';
+  if(score > 700) msg = 'Cyber Master — outstanding!';
+  else if(score > 400) msg = 'Excellent — you are getting sharp!';
+  else if(score > 150) msg = 'Good progress — keep practicing!';
+  else msg = 'Keep going — practice makes perfect!';
+  endMsg.textContent = msg;
+}
+
+/* controls */
+submitBtn.onclick = ()=>{ if(currentType==='sa') submitAnswer(); else { feedback.textContent='Skipped'; streak=0; idx++; renderQuestion(); updateUI(); } };
+skipBtn.onclick = ()=>{ streak=0; idx++; renderQuestion(); updateUI(); };
+restartBtn.onclick = ()=>{ startGame(); };
+playAgain.onclick = ()=>{ startGame(); };
+
+/* init */
+startGame();
 </script>
 </body>
 </html>
