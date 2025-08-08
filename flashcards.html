@@ -1,134 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcards - Mechatronics Study App</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Flashcard specific styles */
-        .flashcard-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .flashcard {
-            background: rgba(255, 255, 255, 0.1);
-            width: 90%;
-            max-width: 400px;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            text-align: center;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            cursor: pointer;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            position: relative;
-        }
-
-        .flashcard.flip {
-            transform: rotateY(180deg);
-        }
-
-        .front, .back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            padding: 20px;
-        }
-
-        .back {
-            transform: rotateY(180deg);
-        }
-
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyberpunk Flashcards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto Mono', monospace;
+      background: radial-gradient(circle at top, #0a0a0a, #000000);
+      color: #00ffff;
+      text-align: center;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+    }
+    #score {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    .flashcard {
+      background: rgba(20, 20, 20, 0.9);
+      border: 2px solid #00ffff;
+      box-shadow: 0 0 15px #00ffff;
+      border-radius: 10px;
+      width: 300px;
+      height: 200px;
+      margin: auto;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease;
+    }
+    .flashcard:hover {
+      box-shadow: 0 0 25px #ff00ff;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+    .flashcard.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      font-size: 1rem;
+    }
+    .card-front {
+      background-color: rgba(0,0,0,0.8);
+      color: #00ffff;
+    }
+    .card-back {
+      background-color: rgba(0,0,0,0.8);
+      color: #ff00ff;
+      transform: rotateY(180deg);
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: transparent;
+      border: 2px solid #ff00ff;
+      color: #ff00ff;
+      font-family: 'Orbitron', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+    button:hover {
+      background: #ff00ff;
+      color: #000;
+      box-shadow: 0 0 15px #ff00ff;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Mechatronics Flashcards</h1>
-        <p>Tap to flip and learn</p>
-    </header>
+  <h1>Cyberpunk Flashcards</h1>
+  <div id="score">Score: <span id="points">0</span></div>
+  <div class="flashcard" id="flashcard">
+    <div class="card-inner">
+      <div class="card-front" id="card-front">Click to Reveal</div>
+      <div class="card-back" id="card-back">Answer</div>
+    </div>
+  </div>
+  <button id="next-btn">Next Card</button>
 
-    <main class="flashcard-container">
-        <div class="flashcard" id="flashcard">
-            <div class="front" id="flashcard-front"></div>
-            <div class="back" id="flashcard-back"></div>
-        </div>
+  <script>
+    const flashcards = [
+      { q: "What does PLC stand for?", a: "Programmable Logic Controller" },
+      { q: "Purpose of an encoder?", a: "To measure rotational position or speed" },
+      { q: "Ohm's law formula?", a: "V = I × R" },
+      { q: "Sensor detecting object without contact?", a: "Proximity Sensor" },
+      { q: "Function of a servo motor?", a: "Precise control of angular position" },
+      { q: "AC frequency in most countries?", a: "50 or 60 Hz" },
+      { q: "What is PWM used for?", a: "Control motor speed or LED brightness" },
+      { q: "Primary use of a relay?", a: "Switching circuits using low power signal" },
+      { q: "Purpose of a limit switch?", a: "Detect physical movement limits" },
+      { q: "Difference between DC and AC?", a: "DC flows one way, AC alternates" },
+      { q: "Robot joint angle measure?", a: "Degree or Radian" },
+      { q: "What is torque?", a: "Rotational force" },
+      { q: "Stepper motor advantage?", a: "Precise incremental movement" },
+      { q: "Microcontroller example?", a: "Arduino" },
+      { q: "PLC programming language example?", a: "Ladder Logic" },
+      { q: "Purpose of H-bridge?", a: "Control motor direction" },
+      { q: "Name of robotic arm end part?", a: "End Effector" },
+      { q: "Purpose of a gearbox?", a: "Adjust torque and speed" },
+      { q: "Optical sensor detects?", a: "Light changes" },
+      { q: "Main goal of preventive maintenance?", a: "Avoid equipment failure" }
+    ];
 
-        <div class="controls">
-            <button class="btn btn-accent" onclick="prevCard()">Previous</button>
-            <button class="btn" onclick="nextCard()">Next</button>
-        </div>
-    </main>
+    let currentIndex = 0;
+    let points = 0;
 
-    <footer>
-        <p><a href="index.html" class="btn">⬅ Back Home</a></p>
-    </footer>
+    const flashcardEl = document.getElementById("flashcard");
+    const cardFront = document.getElementById("card-front");
+    const cardBack = document.getElementById("card-back");
+    const pointsEl = document.getElementById("points");
 
-    <script>
-        const flashcards = [
-            { front: "What does PLC stand for?", back: "Programmable Logic Controller" },
-            { front: "Main function of a servo motor?", back: "Precise control of angular position" },
-            { front: "Ohm’s Law formula?", back: "V = I × R" },
-            { front: "What is a stepper motor used for?", back: "Precise control of position without feedback" },
-            { front: "SI unit of force?", back: "Newton (N)" },
-            { front: "Purpose of an encoder?", back: "Measures position, rotation, or motion" },
-            { front: "What does HMI stand for?", back: "Human-Machine Interface" },
-            { front: "Function of a relay?", back: "Electrically operated switch" },
-            { front: "Microcontroller example?", back: "Arduino, PIC, or STM32" },
-            { front: "What is PWM?", back: "Pulse Width Modulation" },
-            { front: "What is kinematics?", back: "Study of motion without considering forces" },
-            { front: "Purpose of a limit switch?", back: "Detects presence or position of objects" },
-            { front: "Name a robot programming language", back: "RAPID, KRL, URScript" },
-            { front: "What is inertia?", back: "Resistance of an object to change its motion" },
-            { front: "Main function of a gearbox?", back: "Adjusts torque and speed" },
-            { front: "Common sensor in robotics?", back: "Proximity sensor" },
-            { front: "Voltage of standard Arduino Uno?", back: "5V" },
-            { front: "Purpose of a capacitor?", back: "Stores and releases electrical energy" },
-            { front: "What is ROS?", back: "Robot Operating System" },
-            { front: "Difference between AC and DC?", back: "AC alternates, DC flows in one direction" }
-        ];
+    function loadCard(index) {
+      cardFront.textContent = flashcards[index].q;
+      cardBack.textContent = flashcards[index].a;
+      flashcardEl.classList.remove("flipped");
+    }
 
-        let currentIndex = 0;
+    flashcardEl.addEventListener("click", () => {
+      flashcardEl.classList.toggle("flipped");
+      if (flashcardEl.classList.contains("flipped")) {
+        points += 10;
+        pointsEl.textContent = points;
+      }
+    });
 
-        const frontEl = document.getElementById("flashcard-front");
-        const backEl = document.getElementById("flashcard-back");
-        const cardEl = document.getElementById("flashcard");
+    document.getElementById("next-btn").addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % flashcards.length;
+      loadCard(currentIndex);
+    });
 
-        function showCard(index) {
-            frontEl.textContent = flashcards[index].front;
-            backEl.textContent = flashcards[index].back;
-        }
-
-        cardEl.addEventListener("click", () => {
-            cardEl.classList.toggle("flip");
-        });
-
-        function nextCard() {
-            currentIndex = (currentIndex + 1) % flashcards.length;
-            cardEl.classList.remove("flip");
-            showCard(currentIndex);
-        }
-
-        function prevCard() {
-            currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
-            cardEl.classList.remove("flip");
-            showCard(currentIndex);
-        }
-
-        showCard(currentIndex);
-    </script>
+    loadCard(currentIndex);
+  </script>
 </body>
 </html>
