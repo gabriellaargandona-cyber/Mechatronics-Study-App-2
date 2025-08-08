@@ -1,25 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flashcards - Mechatronics Study App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flashcards - Gabriella's Mechatronics Hub</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-  <header>
-    <h1>📚 Flashcards</h1>
-    <nav>
+  <div class="container">
+    <div class="header">
+      <div class="logo">G</div>
+      <div class="title"><h1>Gabriella's Mechatronics Hub</h1><p>Flashcards</p></div>
+    </div>
+    <nav class="nav">
       <a href="index.html">Home</a>
-      <a href="quiz.html">Quiz</a>
+      <a href="flashcards.html" class="active">Flashcards</a>
+      <a href="quiz.html">Quizzes</a>
       <a href="game.html">Game</a>
     </nav>
-  </header>
-  <main>
-    <div id="flashcard-container"></div>
-    <button id="next-card">Next Card</button>
-  </main>
+
+    <div id="flash-root" class="card"></div>
+    <div class="footer small">Tip: tap Flip to flip cards. Add cards to your browser (saved locally).</div>
+  </div>
+
+  <script src="js/main.js"></script>
   <script src="js/flashcards.js"></script>
 </body>
 </html>
