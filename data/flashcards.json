@@ -1,4 +1,6 @@
 [
-  {"front": "What is PWM?", "back": "Pulse Width Modulation - used to control motor speed."},
-  {"front": "What does PLC stand for?", "back": "Programmable Logic Controller."}
+  {"front":"What is PWM?","back":"Pulse Width Modulation — used to control motor speed."},
+  {"front":"What does PLC stand for?","back":"Programmable Logic Controller"},
+  {"front":"Which sensor gives rotational position?","back":"Encoder (optical or magnetic)"},
+  {"front":"What does CAD stand for?","back":"Computer Aided Design"}
 ]
