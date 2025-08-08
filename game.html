@@ -1,25 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Study Game - Mechatronics Study App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Game - Gabriella's Mechatronics Hub</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-  <header>
-    <h1>🎮 Match the Term!</h1>
-    <nav>
+  <div class="container">
+    <div class="header">
+      <div class="logo">G</div>
+      <div class="title"><h1>Gabriella's Mechatronics Hub</h1><p>Study Game</p></div>
+    </div>
+    <nav class="nav">
       <a href="index.html">Home</a>
-      <a href="quiz.html">Quiz</a>
       <a href="flashcards.html">Flashcards</a>
+      <a href="quiz.html">Quizzes</a>
+      <a href="game.html" class="active">Game</a>
     </nav>
-  </header>
-  <main>
-    <div id="game-container"></div>
-    <button id="restart-game">Restart</button>
-  </main>
+
+    <div id="game-root"></div>
+
+    <div class="footer small">Match terms with definitions to reinforce memory.</div>
+  </div>
+
+  <script src="js/main.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>
