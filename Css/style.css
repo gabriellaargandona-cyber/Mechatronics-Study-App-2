@@ -1,120 +1,68 @@
-/* General Styles */
-body {
-  font-family: 'Roboto', sans-serif;
+/* ==== GLOBAL STYLES ==== */
+* {
   margin: 0;
   padding: 0;
-  background: #f4f7fa;
-  color: #333;
+  box-sizing: border-box;
 }
 
-/* Header */
-header {
-  background: linear-gradient(90deg, #005bea, #00c6fb);
-  padding: 20px;
-  text-align: center;
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ==== HEADER ==== */
+header {
+  margin-bottom: 30px;
+  animation: fadeInDown 1s ease-in-out;
 }
 
 header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-}
-
-nav {
-  margin-top: 10px;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  margin: 0 10px;
-  font-weight: bold;
-  transition: opacity 0.3s ease;
-}
-
-nav a:hover {
-  opacity: 0.8;
-}
-
-/* Intro Section */
-.intro {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.intro h2 {
-  font-size: 1.6rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
   margin-bottom: 10px;
 }
 
-.intro p {
+header p {
   font-size: 1rem;
-  max-width: 600px;
-  margin: 0 auto 20px auto;
+  opacity: 0.8;
 }
 
-.cta-btn {
-  background: #005bea;
-  color: white;
-  padding: 12px 25px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.cta-btn:hover {
-  background: #0040b4;
-}
-
-/* Features Section */
-.features {
+/* ==== MAIN CARDS ==== */
+main {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
   gap: 20px;
-  padding: 20px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .card {
-  background: white;
+  background: rgba(255, 255, 255, 0.05);
   padding: 20px;
-  width: 250px;
   border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
 }
 
-.card h3 {
-  color: #005bea;
-  margin-bottom: 10px;
-}
-
-/* Footer */
-footer {
-  background: #002f6c;
+/* ==== BUTTONS ==== */
+.btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #1abc9c;
   color: white;
-  text-align: center;
-  padding: 10px;
-  font-size: 0.9rem;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  .features {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .card {
-    width: 90%;
-  }
-}
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight:
