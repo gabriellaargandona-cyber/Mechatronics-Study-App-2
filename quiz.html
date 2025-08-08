@@ -1,149 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz - Mechatronics Study App</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .quiz-container {
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .question {
-      font-size: 1.2rem;
-      margin-bottom: 15px;
-    }
-    .options button {
-      display: block;
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      background: #005bea;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .options button:hover {
-      background: #0040b4;
-    }
-    .progress {
-      height: 10px;
-      background: #ddd;
-      border-radius: 5px;
-      margin: 20px 0;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 10px;
-      background: #00c6fb;
-      width: 0;
-      transition: width 0.3s;
-    }
-    .score {
-      font-weight: bold;
-      text-align: center;
-      margin-top: 15px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Mechatronics Study App</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .quiz-container {
+            max-width: 500px;
+            margin: auto;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .options button:hover {
+            background: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Mechatronics Quiz</h1>
+        <p>Test your knowledge!</p>
+    </header>
 
-  <header>
-    <h1>Mechatronics Quiz</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="quiz.html">Quiz</a>
-      <a href="flashcards.html">Flashcards</a>
-      <a href="game.html">Game</a>
-    </nav>
-  </header>
+    <main class="quiz-container">
+        <div id="quiz">
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="result" id="result"></div>
+        </div>
+        <button class="btn btn-accent" onclick="nextQuestion()">Next Question</button>
+    </main>
 
-  <div class="quiz-container">
-    <div class="question" id="question">Question text</div>
-    <div class="options" id="options"></div>
-    <div class="progress">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-    <div class="score" id="score"></div>
-  </div>
+    <footer>
+        <p><a href="index.html" class="btn">⬅ Back Home</a></p>
+    </footer>
 
-  <footer>
-    <p>&copy; 2025 Mechatronics Study App</p>
-  </footer>
+    <script>
+        const quizData = [
+            { question: "What does PLC stand for?", options: ["Programmable Logic Controller", "Power Line Circuit", "Primary Load Conductor"], answer: 0 },
+            { question: "Ohm's Law formula?", options: ["V = I × R", "P = V × I", "R = V / I"], answer: 0 },
+            { question: "Function of a servo motor?", options: ["Precise angular position control", "High torque constant speed", "Random rotation"], answer: 0 },
+            { question: "Unit of electrical resistance?", options: ["Volt", "Ampere", "Ohm"], answer: 2 },
+            { question: "What is PWM?", options: ["Pulse Width Modulation", "Power Watt Measurement", "Phase Wave Mechanics"], answer: 0 }
+        ];
 
-  <script>
-    const quizData = [
-      {
-        question: "What does a servo motor control in robotics?",
-        options: ["Linear motion", "Rotational position", "Temperature", "Light intensity"],
-        answer: "Rotational position"
-      },
-      {
-        question: "Which sensor is commonly used for distance measurement?",
-        options: ["Ultrasonic sensor", "Gyroscope", "Microphone", "Accelerometer"],
-        answer: "Ultrasonic sensor"
-      },
-      {
-        question: "What is the main function of a microcontroller in mechatronics?",
-        options: ["Mechanical power generation", "Controlling and processing signals", "Lubricating moving parts", "Cooling the system"],
-        answer: "Controlling and processing signals"
-      },
-      {
-        question: "Which communication protocol is widely used in industrial automation?",
-        options: ["HTTP", "Modbus", "FTP", "SMTP"],
-        answer: "Modbus"
-      },
-      {
-        question: "PID in control systems stands for?",
-        options: ["Proportional Integral Derivative", "Power Input Device", "Pulse Inverter Drive", "Pressure Indicating Device"],
-        answer: "Proportional Integral Derivative"
-      }
-    ];
+        let currentQuestion = 0;
+        let score = 0;
 
-    let currentQuestion = 0;
-    let score = 0;
+        const questionEl = document.getElementById("question");
+        const optionsEl = document.getElementById("options");
+        const resultEl = document.getElementById("result");
 
-    function loadQuestion() {
-      const q = quizData[currentQuestion];
-      document.getElementById('question').textContent = q.question;
-      const optionsContainer = document.getElementById('options');
-      optionsContainer.innerHTML = '';
-      q.options.forEach(option => {
-        const btn = document.createElement('button');
-        btn.textContent = option;
-        btn.onclick = () => checkAnswer(option);
-        optionsContainer.appendChild(btn);
-      });
-      updateProgress();
-    }
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            questionEl.textContent = q.question;
+            optionsEl.innerHTML = "";
+            resultEl.textContent = "";
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(index);
+                optionsEl.appendChild(btn);
+            });
+        }
 
-    function checkAnswer(selected) {
-      if (selected === quizData[currentQuestion].answer) {
-        score++;
-      }
-      currentQuestion++;
-      if (currentQuestion < quizData.length) {
+        function checkAnswer(selected) {
+            const correct = quizData[currentQuestion].answer;
+            if (selected === correct) {
+                score++;
+                resultEl.textContent = "✅ Correct!";
+            } else {
+                resultEl.textContent = `❌ Wrong! Correct answer: ${quizData[currentQuestion].options[correct]}`;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                questionEl.textContent = "Quiz Completed!";
+                optionsEl.innerHTML = "";
+                resultEl.textContent = `Your score: ${score} / ${quizData.length}`;
+            }
+        }
+
         loadQuestion();
-      } else {
-        document.getElementById('question').textContent = "Quiz Completed!";
-        document.getElementById('options').innerHTML = '';
-        document.getElementById('score').textContent = `Your Score: ${score} / ${quizData.length}`;
-      }
-    }
-
-    function updateProgress() {
-      const progress = (currentQuestion / quizData.length) * 100;
-      document.getElementById('progress-bar').style.width = progress + '%';
-    }
-
-    loadQuestion();
-  </script>
+    </script>
 </body>
 </html>
