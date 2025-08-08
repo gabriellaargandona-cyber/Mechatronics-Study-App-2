@@ -1,68 +1,106 @@
-/* ==== GLOBAL STYLES ==== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Cyberpunk Theme Styles */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
 body {
-  font-family: 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: white;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
+    background: linear-gradient(135deg, #0d0d0d, #1a0033);
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
-/* ==== HEADER ==== */
+/* Header */
 header {
-  margin-bottom: 30px;
-  animation: fadeInDown 1s ease-in-out;
+    background: rgba(10, 0, 30, 0.9);
+    padding: 20px;
+    text-align: center;
+    font-size: 2rem;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
 }
 
-header h1 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2rem;
-  margin-bottom: 10px;
+/* Main content container */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
 }
 
-header p {
-  font-size: 1rem;
-  opacity: 0.8;
+/* Buttons */
+button, .btn {
+    background: transparent;
+    border: 2px solid #ff00ff;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.3s ease;
+    text-shadow: 0 0 5px #00ffff;
+}
+button:hover, .btn:hover {
+    background: #ff00ff;
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #00ffff;
 }
 
-/* ==== MAIN CARDS ==== */
-main {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 500px;
-}
-
+/* Cards */
 .card {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(15, 0, 40, 0.9);
+    border: 1px solid #ff00ff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px #00ffff, 0 0 40px #ff00ff;
 }
 
-/* ==== BUTTONS ==== */
-.btn {
-  display: inline-block;
-  margin-top: 15px;
-  padding: 10px 20px;
-  background: #1abc9c;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight:
+/* Flashcards specific */
+.flashcard {
+    text-align: center;
+    padding: 30px;
+    font-size: 1.2rem;
+    min-height: 120px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #00ffff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px #00ffff, 0 0 30px #ff00ff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.flashcard:hover {
+    transform: rotateY(5deg) scale(1.05);
+}
+
+/* Quiz styles */
+.quiz-question {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px #ff00ff;
+}
+.quiz-option {
+    display: block;
+    margin: 8px 0;
+    padding: 10px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid #00ffff;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.quiz-option:hover {
+    background: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 10px #00ffff;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-top: 20px;
+}
