@@ -1,82 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Gabriella's Mechatronics Hub</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/animations.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mechatronics Study App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="logo">G</div>
-      <div class="title">
-        <h1>Gabriella's Mechatronics Study Hub</h1>
-        <p>Apprenticeship prep — flashcards, quizzes & a study game</p>
-      </div>
-    </div>
-
-    <nav class="nav">
-      <a href="index.html" class="active">Home</a>
-      <a href="flashcards.html">Flashcards</a>
-      <a href="quiz.html">Quizzes</a>
-      <a href="game.html">Game</a>
+  <header>
+    <h1>⚙️ Mechatronics Study Hub</h1>
+    <nav>
+      <a href="flashcards.html">📇 Flashcards</a>
+      <a href="quiz.html">📝 Quiz</a>
+      <a href="game.html">🎮 Study Game</a>
     </nav>
+  </header>
 
-    <div class="grid">
-      <div class="col-8">
-        <div class="card">
-          <h2 style="margin:0 0 8px 0">Welcome, Gabriella 👋</h2>
-          <p style="margin:0 0 12px 0;color:var(--muted)">Use these tools to practice PLC, control theory, electrical, pneumatics and CAD/CAM basics.</p>
+  <main>
+    <section class="intro">
+      <h2>Welcome, Future Robotics Expert!</h2>
+      <p>Prepare for your apprenticeship certification with interactive study tools and fun games. Learn at your own pace and track your progress.</p>
+      <button onclick="location.href='quiz.html'" class="cta-btn">Start Quiz</button>
+    </section>
 
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <a class="btn btn-primary" href="flashcards.html">Study Flashcards</a>
-            <a class="btn btn-ghost" href="quiz.html">Take a Quiz</a>
-            <a class="btn btn-ghost" href="game.html">Play the Game</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0">Weekly Study Progress</h3>
-          <div class="progress-wrap" style="margin-top:10px">
-            <div class="progress-bar"><div class="progress-fill"></div></div>
-            <div id="progress-badge" style="min-width:96px;text-align:right">0 min / week</div>
-          </div>
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <button class="btn btn-primary" data-log-mins="10">Log 10 min</button>
-            <button class="btn btn-primary" data-log-mins="20">Log 20 min</button>
-            <button class="btn btn-primary" data-log-mins="30">Log 30 min</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0">Quick Tips</h3>
-          <ul style="margin:8px 0 0 16px;color:var(--muted)">
-            <li>Short daily sessions (20–30 min) beat long cramming.</li>
-            <li>Mix quizzes and flashcards for long-term retention.</li>
-            <li>Use the matching game when you need a quick break.</li>
-          </ul>
-        </div>
+    <section class="features">
+      <div class="card">
+        <h3>Flashcards</h3>
+        <p>Flip and learn key concepts for your exam.</p>
       </div>
-
-      <div class="col-4">
-        <div class="card">
-          <h4 style="margin:0 0 8px 0">Today's Snapshot</h4>
-          <div id="today-activity" style="color:var(--muted);margin-top:6px">No study logged yet</div>
-        </div>
-
-        <div class="card">
-          <h4 style="margin:0 0 8px 0">Quick Links</h4>
-          <a class="btn btn-ghost" href="flashcards.html">Flashcards</a>
-          <a class="btn btn-ghost" href="quiz.html">Quizzes</a>
-        </div>
+      <div class="card">
+        <h3>Quizzes</h3>
+        <p>Test your knowledge and improve your scores.</p>
       </div>
-    </div>
+      <div class="card">
+        <h3>Mini Game</h3>
+        <p>Play a robotics-themed game to reinforce learning.</p>
+      </div>
+    </section>
+  </main>
 
-    <div class="footer">Made for Gabriella • Edit questions via the repo files (data/quizzes.json)</div>
-  </div>
-
-  <script src="js/main.js"></script>
+  <footer>
+    <p>Made with ❤️ for aspiring mechatronics & robotics engineers</p>
+  </footer>
 </body>
 </html>
