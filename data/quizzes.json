@@ -1,0 +1,4 @@
+[
+  {"q": "What is PWM?", "choices": ["Pulse Width Modulation", "Power Watt Measurement", "Phase Wave Modulation"], "a": 0},
+  {"q": "What does PLC stand for?", "choices": ["Programmable Logic Controller", "Power Line Communication", "Process Level Control"], "a": 0}
+]
