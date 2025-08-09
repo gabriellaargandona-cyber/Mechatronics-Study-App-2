@@ -7,134 +7,154 @@
 <link rel="stylesheet" href="style.css" />
 <style>
 body {
-  margin: 0;
-  background: black;
-  color: #00ff00;
-  font-family: monospace;
-  overflow: hidden;
+    background-color: black;
+    color: #00ff99;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
 }
-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-}
-.flashcard-container {
-  max-width: 800px;
-  margin: 50px auto;
-  text-align: center;
+.container {
+    text-align: center;
 }
 .flashcard {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #00ff00;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px #00ff00;
-  min-height: 200px;
-  transition: transform 0.6s;
+    width: 300px;
+    height: 400px;
+    perspective: 1000px;
+    margin: auto;
+    animation: pulseGlow 2s infinite;
+}
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+.flashcard.flip .flashcard-inner {
+    transform: rotateX(180deg);
+}
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background-color: rgba(0, 255, 153, 0.1);
+    border: 2px solid #00ff99;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #00ff99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.flashcard-back {
+    transform: rotateX(180deg);
+}
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 10px #00ff99; }
+    50% { box-shadow: 0 0 30px #00ff99; }
+    100% { box-shadow: 0 0 10px #00ff99; }
 }
 button {
-  background: black;
-  color: #00ff00;
-  border: 1px solid #00ff00;
-  padding: 10px 20px;
-  margin-top: 15px;
-  cursor: pointer;
+    background: black;
+    border: 2px solid #00ff99;
+    color: #00ff99;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
 }
 button:hover {
-  background: #003300;
+    background: #00ff99;
+    color: black;
 }
 </style>
 </head>
 <body>
-
-<canvas id="matrixRain"></canvas>
-
-<div class="flashcard-container">
-  <h1>Matrix Flashcards</h1>
-  <div id="flashcard" class="flashcard"></div>
-  <input type="text" id="answer" placeholder="Type your answer..." style="width: 80%; padding: 10px; margin-top: 15px;" />
-  <br />
-  <button onclick="checkAnswer()">Submit</button>
-  <button onclick="nextCard()">Next</button>
-  <p id="feedback"></p>
-  <p>Score: <span id="score">0</span></p>
+<div class="container">
+    <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+            <div class="flashcard-front" id="question"></div>
+            <div class="flashcard-back" id="answer"></div>
+        </div>
+    </div>
+    <button id="nextBtn">Next</button>
 </div>
 
-<script>
-// Sounds
-const flipSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2221/2221-preview.mp3'); // soft swipe
-const correctSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'); // digital chime
-const wrongSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1080/1080-preview.mp3'); // glitch buzz
+<audio id="flipSound" src="https://assets.mixkit.co/sfx/preview/mixkit-quick-sci-fi-sweep-231.wav"></audio>
+<audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-game-notification-212.wav"></audio>
+<audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-electric-fuzz-hit-2618.wav"></audio>
+<audio id="bgSound" src="https://cdn.pixabay.com/download/audio/2022/03/14/audio_f2cc9b1f52.mp3?filename=data-stream-ambient-110241.mp3" loop autoplay></audio>
 
-// Flashcards
-const cards = [
-  {q: "What does PLC stand for?", a: "Programmable Logic Controller"},
-  {q: "True or False: Ohm's Law is V = I × R.", a: "True"},
-  {q: "Name one common sensor in robotics.", a: "Ultrasonic sensor"},
-  {q: "What year was the first industrial robot introduced?", a: "1961"},
-  {q: "Short answer: SI unit of force?", a: "Newton"},
-  // ... add 25 more questions here ...
+<script>
+const flashcard = document.getElementById('flashcard');
+const questionEl = document.getElementById('question');
+const answerEl = document.getElementById('answer');
+const nextBtn = document.getElementById('nextBtn');
+
+const flipSound = document.getElementById('flipSound');
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const bgSound = document.getElementById('bgSound');
+bgSound.volume = 0.2;
+bgSound.play();
+
+const flashcards = [
+    { q: "Ohm's Law formula?", a: "V = I × R" },
+    { q: "Name a type of stepper motor.", a: "Permanent Magnet Stepper" },
+    { q: "Microcontroller used in Arduino?", a: "ATmega328P" },
+    { q: "What does PWM stand for?", a: "Pulse Width Modulation" },
+    { q: "Gear that changes rotational direction 90°?", a: "Bevel Gear" },
+    { q: "Robot movement along X/Y/Z axes?", a: "Cartesian Motion" },
+    { q: "True/False: Servo motors rotate continuously.", a: "False" },
+    { q: "Short answer: Function of an encoder?", a: "Measures position/speed" },
+    { q: "Common voltage for logic circuits?", a: "5V or 3.3V" },
+    { q: "Formula for kinetic energy?", a: "½ m v²" },
+    { q: "Robot arm joint name?", a: "Actuator" },
+    { q: "True/False: A diode allows current both ways.", a: "False" },
+    { q: "Material often used for robot frames?", a: "Aluminum" },
+    { q: "Short answer: What is torque?", a: "Rotational force" },
+    { q: "Type of sensor for distance?", a: "Ultrasonic Sensor" },
+    { q: "True/False: PLC stands for Programmable Logic Controller.", a: "True" },
+    { q: "Device to store electrical energy?", a: "Capacitor" },
+    { q: "Part that converts AC to DC?", a: "Rectifier" },
+    { q: "True/False: Gears increase speed and torque simultaneously.", a: "False" },
+    { q: "Short answer: What is CAD?", a: "Computer-Aided Design" },
+    { q: "Motor type without brushes?", a: "Brushless DC Motor" },
+    { q: "True/False: Stepper motors need feedback sensors.", a: "False" },
+    { q: "Common robotic programming language?", a: "Python" },
+    { q: "True/False: Resistance is measured in Ohms.", a: "True" },
+    { q: "Formula for power in electrical circuits?", a: "P = V × I" },
+    { q: "Short answer: What is inertia?", a: "Resistance to motion change" },
+    { q: "Device to amplify signals?", a: "Transistor" },
+    { q: "Part that senses magnetic field?", a: "Hall Effect Sensor" },
+    { q: "Short answer: What is mechatronics?", a: "Integration of mechanics, electronics, and computing" }
 ];
 
-let current = 0;
-let score = 0;
+let currentIndex = 0;
 
-function showCard() {
-  document.getElementById("flashcard").textContent = cards[current].q;
-  document.getElementById("answer").value = "";
-  document.getElementById("feedback").textContent = "";
-  flipSound.play();
+function loadCard(index) {
+    questionEl.textContent = flashcards[index].q;
+    answerEl.textContent = flashcards[index].a;
+    flashcard.classList.remove('flip');
 }
 
-function checkAnswer() {
-  const ans = document.getElementById("answer").value.trim();
-  if (ans.toLowerCase() === cards[current].a.toLowerCase()) {
-    document.getElementById("feedback").textContent = "✅ Correct!";
-    score++;
-    document.getElementById("score").textContent = score;
-    correctSound.play();
-  } else {
-    document.getElementById("feedback").textContent = `❌ Wrong! Correct answer: ${cards[current].a}`;
-    wrongSound.play();
-  }
-}
+flashcard.addEventListener('click', () => {
+    flashcard.classList.toggle('flip');
+    flipSound.play();
+});
 
-function nextCard() {
-  current = (current + 1) % cards.length;
-  showCard();
-}
+nextBtn.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % flashcards.length;
+    loadCard(currentIndex);
+});
 
-// Matrix Rain
-const canvas = document.getElementById("matrixRain");
-const ctx = canvas.getContext("2d");
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
-
-const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-const fontSize = 16;
-const columns = canvas.width / fontSize;
-const drops = [];
-
-for (let x = 0; x < columns; x++) drops[x] = 1;
-
-function draw() {
-  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#0F0";
-  ctx.font = fontSize + "px monospace";
-  for (let i = 0; i < drops.length; i++) {
-    const text = letters.charAt(Math.floor(Math.random() * letters.length));
-    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-    drops[i]++;
-  }
-}
-
-setInterval(draw, 35);
-
-showCard();
+loadCard(currentIndex);
 </script>
-
 </body>
 </html>
